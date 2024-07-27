@@ -139,10 +139,6 @@
     <a onclick="showContentForm()"><i class="fas fa-plus"></i> Author ✍️</a>
 </nav>
 
-<div class="container" id="books-container">
-    <!-- Books will be dynamically inserted here -->
-</div>
-
 <div class="container content-form" id="content-form" style="display: none;">
     <h2>📑</h2>
     <form onsubmit="publishContent(event)">
@@ -158,7 +154,10 @@
         <label for="content-description">Book Description</label>
         <textarea id="content-description" name="content-description" rows="5" placeholder="Write short description here..." required></textarea>
 
-        <button type="submit">submit</button>
+        <label for="verification-code">Verification Code</label>
+        <input type="text" id="verification-code" name="verification-code" placeholder="Enter the code" required>
+
+        <button type="submit">Submit</button>
     </form>
 </div>
 
@@ -232,24 +231,33 @@
     }
 
     function publishContent(event) {
-        event.preventDefault();
-        const title = document.getElementById('content-title').value;
-        const url = document.getElementById('content-url').value;
-        const description = document.getElementById('content-description').value;
-        const coverInput = document.getElementById('content-cover');
-        const coverFile = coverInput.files[0];
+    event.preventDefault();
+    
+    const verificationCode = document.getElementById('verification-code').value;
+    const correctCode = "112233";
 
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            const cover = reader.result;
-            const book = { title, url, description, cover };
-            saveBook(book);
-            showBooks();
-        };
-        if (coverFile) {
-            reader.readAsDataURL(coverFile);
-        }
+    if (verificationCode !== correctCode) {
+        alert("Incorrect verification code. Please try again.");
+        return;
     }
+
+    const title = document.getElementById('content-title').value;
+    const url = document.getElementById('content-url').value;
+    const description = document.getElementById('content-description').value;
+    const coverInput = document.getElementById('content-cover');
+    const coverFile = coverInput.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = function() {
+        const cover = reader.result;
+        const book = { title, url, description, cover };
+        saveBook(book);
+        showBooks();
+    };
+    if (coverFile) {
+        reader.readAsDataURL(coverFile);
+    }
+}
 
     document.addEventListener('DOMContentLoaded', () => {
         showBooks();

@@ -139,6 +139,10 @@
     <a onclick="showContentForm()"><i class="fas fa-plus"></i> Author ✍️</a>
 </nav>
 
+<div class="container" id="books-container">
+    <!-- Books will be dynamically inserted here -->
+</div>
+
 <div class="container content-form" id="content-form" style="display: none;">
     <h2>📑</h2>
     <form onsubmit="publishContent(event)">
@@ -181,7 +185,7 @@
         return JSON.parse(localStorage.getItem('books')) || [];
     }
 
-    function saveBooks(Book) {
+    function saveBook(book) {
         const books = getBooks();
         books.unshift(book); // Add new book to the beginning of the array
         localStorage.setItem('books', JSON.stringify(books));

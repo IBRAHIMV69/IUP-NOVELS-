@@ -182,7 +182,7 @@
         return JSON.parse(localStorage.getItem('books')) || [];
     }
 
-    function () {
+    function saveBooks(Book) {
         const books = getBooks();
         books.unshift(book); // Add new book to the beginning of the array
         localStorage.setItem('books', JSON.stringify(books));

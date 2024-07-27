@@ -158,7 +158,7 @@
         <label for="content-description">Book Description</label>
         <textarea id="content-description" name="content-description" rows="5" placeholder="Write short description here..." required></textarea>
 
-        < =""><>
+        <button type="submit">submit</button>
     </form>
 </div>
 
@@ -182,7 +182,7 @@
         return JSON.parse(localStorage.getItem('books')) || [];
     }
 
-    function saveBook(book) {
+    function () {
         const books = getBooks();
         books.unshift(book); // Add new book to the beginning of the array
         localStorage.setItem('books', JSON.stringify(books));

@@ -43,7 +43,7 @@
             text-decoration: underline;
         }
         .container {
-            max-width: 700px;
+            max-width: 800px;
             margin: 20px auto;
             padding: 20px;
             background-color: #fff;
@@ -99,7 +99,33 @@
             bottom: 0;
         }
         .content-form {
-        
+            margin-top: 20px;
+        }
+        .content-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .content-form input, .content-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .content-form button {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .content-form button:hover {
+            background-color: #2471a3;
+        }
+        .content-cover {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -131,6 +157,9 @@
 
         <label for="content-description">Book Description</label>
         <textarea id="content-description" name="content-description" rows="5" placeholder="Write short description here..." required></textarea>
+
+        <label for="verification-code">Author Code</label>
+        <input type="text" id="verification-code" name="verification-code" placeholder="Enter the code" required>
 
         <button type="submit">Submit</button>
     </form>
@@ -206,24 +235,33 @@
     }
 
     function publishContent(event) {
-        event.preventDefault();
-        const title = document.getElementById('content-title').value;
-        const url = document.getElementById('content-url').value;
-        const description = document.getElementById('content-description').value;
-        const coverInput = document.getElementById('content-cover');
-        const coverFile = coverInput.files[0];
+    event.preventDefault();
+    
+    const verificationCode = document.getElementById('verification-code').value;
+    const correctCode = "112233";
 
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            const cover = reader.result;
-            const book = { title, url, description, cover };
-            saveBook(book);
-            showBooks();
-        };
-        if (coverFile) {
-            reader.readAsDataURL(coverFile);
-        }
+    if (verificationCode !== correctCode) {
+        alert("Incorrect verification code. Please try again.");
+        return;
     }
+
+    const title = document.getElementById('content-title').value;
+    const url = document.getElementById('content-url').value;
+    const description = document.getElementById('content-description').value;
+    const coverInput = document.getElementById('content-cover');
+    const coverFile = coverInput.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = function() {
+        const cover = reader.result;
+        const book = { title, url, description, cover };
+        saveBook(book);
+        showBooks();
+    };
+    if (coverFile) {
+        reader.readAsDataURL(coverFile);
+    }
+}
 
     document.addEventListener('DOMContentLoaded', () => {
         showBooks();

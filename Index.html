@@ -13,7 +13,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        .auth-section {
+        .audio-upload {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -22,35 +22,8 @@
             border-radius: 8px;
             margin: 16px;
         }
-        .upload-icon {
-            display: none; /* Hidden initially */
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-            border-radius: 50%;
-            background-color: #0072ff;
-            color: #fff;
-            cursor: pointer;
-            font-size: 24px;
-            width: 48px;
-            height: 48px;
-            margin: 16px auto;
-            transition: background 0.3s ease;
-        }
-        .upload-icon:hover {
-            background-color: #005bb5;
-        }
-        .audio-upload-form {
-            display: none; /* Hidden initially */
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 8px;
-            margin: 16px;
-        }
-        .audio-upload-form input[type="file"], .audio-upload-form button {
-            padding: 5px 5px;
+        .audio-upload input[type="file"], .audio-upload input[type="text"], .audio-upload button {
+            padding: 8px 16px;
             border-radius: 4px;
             border: none;
             outline: none;
@@ -58,11 +31,11 @@
             color: #333;
             cursor: pointer;
         }
-        .audio-upload-form button {
+        .audio-upload button {
             background: #0072ff;
             color: #fff;
         }
-        .audio-upload-form button:hover {
+        .audio-upload button:hover {
             background: #005bb5;
         }
         .audio-grid {
@@ -114,110 +87,160 @@
     </style>
 </head>
 <body>
-    <div class="auth-section">
+    <div class="audio-upload">
         <input type="text" id="codeInput" placeholder="Enter Code">
-        <button onclick="validateCode()">Submit</button>
-    </div>
-
-    <!-- Upload Icon, hidden initially -->
-    <div id="uploadIcon" class="upload-icon" onclick="toggleUploadForm()">⬆️</div>
-
-    <!-- Upload Form hidden initially -->
-    <div id="uploadSection" class="audio-upload-form">
-        <input type="file" id="audioFileInput" accept="audio/*" multiple>
-        <button onclick="loadAudios()">Submit</button>
+        <input type="file" id="audioFileInput" accept="audio/*" multiple disabled>
+        <button onclick="checkCode()">Submit Code</button>
+        <button onclick="loadAudios()" disabled id="loadButton">Load Audios</button>
     </div>
 
     <div id="audioGrid" class="audio-grid"></div>
 
     <script>
-        // Function to validate code
-        function validateCode() {
-            const code = document.getElementById('codeInput').value.trim();
-            if (code === '112233') {
-                document.getElementById('uploadIcon').style.display = 'flex'; // Show upload icon
-                loadAudiosFromStorage(); // Load existing audios from local storage
-                alert("Code accepted! Click the upload icon to upload audio files.");
+        let db;
+
+        // Open (or create) the database
+        const request = indexedDB.open('AudioDB', 1);
+
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+            db.createObjectStore('audioFiles', { keyPath: 'id' });
+        };
+
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            loadStoredAudios();
+        };
+
+        function checkCode() {
+            const code = document.getElementById('codeInput').value;
+            const audioInput = document.getElementById('audioFileInput');
+            const loadButton = document.getElementById('loadButton');
+
+            const storedCode = localStorage.getItem('audioUploadCode');
+
+            if (storedCode === code) {
+                audioInput.disabled = false;
+                loadButton.disabled = false;
+                alert("Code accepted! You can now upload audio files.");
+            } else if (code === '112233') {
+                localStorage.setItem('audioUploadCode', code);
+                audioInput.disabled = false;
+                loadButton.disabled = false;
+                alert("Code accepted! You can now upload audio files.");
             } else {
-                alert("Invalid code. Please try again.");
+                alert("Invalid code. Please enter the correct code.");
+                audioInput.disabled = true;
+                loadButton.disabled = true;
             }
         }
 
-        // Function to toggle the visibility of the upload form
-        function toggleUploadForm() {
-            const uploadSection = document.getElementById('uploadSection');
-            uploadSection.style.display = uploadSection.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        // Function to load audios from the input
         function loadAudios() {
             const audioInput = document.getElementById('audioFileInput');
+            const audioGrid = document.getElementById('audioGrid');
+
             if (audioInput.files.length > 0) {
                 Array.from(audioInput.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        saveAudioToStorage(file.name, e.target.result);
-                        displayAudio(file.name, e.target.result);
-                    };
-                    reader.readAsDataURL(file);
+                    const audioTask = document.createElement('div');
+                    audioTask.className = 'audio-task';
+
+                    const audioTitle = document.createElement('p');
+                    audioTitle.className = 'audio-title';
+                    audioTitle.textContent = file.name;
+
+                    const audioPlayer = document.createElement('audio');
+                    audioPlayer.controls = true;
+                    audioPlayer.src = URL.createObjectURL(file);
+
+                    const skipButtons = document.createElement('div');
+                    skipButtons.className = 'skip-buttons';
+
+                    const backButton = document.createElement('button');
+                    backButton.textContent = '⏪ -10s';
+                    backButton.onclick = () => skipAudio(audioPlayer, -10);
+                    skipButtons.appendChild(backButton);
+
+                    const forwardButton = document.createElement('button');
+                    forwardButton.textContent = '⏩ +10s';
+                    forwardButton.onclick = () => skipAudio(audioPlayer, 10);
+                    skipButtons.appendChild(forwardButton);
+
+                    audioTask.appendChild(audioTitle);
+                    audioTask.appendChild(audioPlayer);
+                    audioTask.appendChild(skipButtons);
+                    audioGrid.appendChild(audioTask);
+
+                    // Save audio file to IndexedDB
+                    saveAudioToDB(file);
                 });
             } else {
                 alert("Please select audio files to play.");
             }
         }
 
-        // Function to save audio file to local storage
-        function saveAudioToStorage(name, data) {
-            let audios = JSON.parse(localStorage.getItem('audios')) || {};
-            audios[name] = data; // Save audio file data as Base64
-            localStorage.setItem('audios', JSON.stringify(audios));
-        }
-
-        // Function to display audio files from local storage
-        function loadAudiosFromStorage() {
-            const audioGrid = document.getElementById('audioGrid');
-            const audios = JSON.parse(localStorage.getItem('audios')) || {};
-            for (const [name, data] of Object.entries(audios)) {
-                displayAudio(name, data);
-            }
-        }
-
-        // Function to display a single audio
-        function displayAudio(name, data) {
-            const audioGrid = document.getElementById('audioGrid');
-            const audioTask = document.createElement('div');
-            audioTask.className = 'audio-task';
-
-            const audioTitle = document.createElement('p');
-            audioTitle.className = 'audio-title';
-            audioTitle.textContent = name;
-
-            const audioPlayer = document.createElement('audio');
-            audioPlayer.controls = true;
-            audioPlayer.src = data;
-
-            const skipButtons = document.createElement('div');
-            skipButtons.className = 'skip-buttons';
-
-            const backButton = document.createElement('button');
-            backButton.textContent = '⏪ -10s';
-            backButton.onclick = () => skipAudio(audioPlayer, -10);
-            skipButtons.appendChild(backButton);
-
-            const forwardButton = document.createElement('button');
-            forwardButton.textContent = '⏩ +10s';
-            forwardButton.onclick = () => skipAudio(audioPlayer, 10);
-            skipButtons.appendChild(forwardButton);
-
-            audioTask.appendChild(audioTitle);
-            audioTask.appendChild(audioPlayer);
-            audioTask.appendChild(skipButtons);
-            audioGrid.appendChild(audioTask);
-        }
-
-        // Function to skip audio playback time
         function skipAudio(audioElement, time) {
             audioElement.currentTime += time;
+        }
+
+        function saveAudioToDB(file) {
+            const transaction = db.transaction(['audioFiles'], 'readwrite');
+            const store = transaction.objectStore('audioFiles');
+
+            const audioData = {
+                id: file.name,
+                file: file
+            };
+
+            const request = store.put(audioData);
+
+            request.onsuccess = function() {
+                console.log("Audio file saved to IndexedDB");
+            };
+
+            request.onerror = function() {
+                console.error("Error saving audio file to IndexedDB");
+            };
+        }
+
+        function loadStoredAudios() {
+            const audioGrid = document.getElementById('audioGrid');
+            const transaction = db.transaction(['audioFiles'], 'readonly');
+            const store = transaction.objectStore('audioFiles');
+            const request = store.getAll();
+
+            request.onsuccess = function(event) {
+                const audioFiles = event.target.result;
+                audioFiles.forEach(audioData => {
+                    const audioTask = document.createElement('div');
+                    audioTask.className = 'audio-task';
+
+                    const audioTitle = document.createElement('p');
+                    audioTitle.className = 'audio-title';
+                    audioTitle.textContent = audioData.id;
+
+                    const audioPlayer = document.createElement('audio');
+                    audioPlayer.controls = true;
+                    audioPlayer.src = URL.createObjectURL(audioData.file);
+
+                    const skipButtons = document.createElement('div');
+                    skipButtons.className = 'skip-buttons';
+
+                    const backButton = document.createElement('button');
+                    backButton.textContent = '⏪ -10s';
+                    backButton.onclick = () => skipAudio(audioPlayer, -10);
+                    skipButtons.appendChild(backButton);
+
+                    const forwardButton = document.createElement('button');
+                    forwardButton.textContent = '⏩ +10s';
+                    forwardButton.onclick = () => skipAudio(audioPlayer, 10);
+                    skipButtons.appendChild(forwardButton);
+
+                    audioTask.appendChild(audioTitle);
+                    audioTask.appendChild(audioPlayer);
+                    audioTask.appendChild(skipButtons);
+                    audioGrid.appendChild(audioTask);
+                });
+            };
         }
     </script>
 </body>

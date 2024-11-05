@@ -23,7 +23,7 @@
             margin: 16px;
         }
         .audio-upload input[type="file"], .audio-upload input[type="text"], .audio-upload button {
-            padding: 8px 16px;
+            padding: 5px 5px;
             border-radius: 4px;
             border: none;
             outline: none;
@@ -40,7 +40,7 @@
         }
         .audio-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 16px;
             padding: 16px;
         }
@@ -90,8 +90,8 @@
     <div class="audio-upload">
         <input type="text" id="codeInput" placeholder="Enter Code">
         <input type="file" id="audioFileInput" accept="audio/*" multiple disabled>
-        <button onclick="checkCode()">Submit Code</button>
-        <button onclick="loadAudios()" disabled id="loadButton">Load Audios</button>
+        <button onclick="checkCode()">Submit</button>
+        <button onclick="loadAudios()" disabled id="loadButton">Upload</button>
     </div>
 
     <div id="audioGrid" class="audio-grid"></div>

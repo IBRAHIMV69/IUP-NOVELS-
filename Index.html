@@ -3,106 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Upload and Storage</title>
+    <title>Video Tasks - Amazing Style</title>
     <style>
-        /* Styling for a clean and modern look */
+        /* Amazing Style Design */
         body {
             font-family: 'Arial', sans-serif;
-            background: #141e30;
+            background: linear-gradient(to right, #141e30, #243b55);
             color: #fff;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .nav-button {
+            background: linear-gradient(135deg, #ff6a00, #ee0979);
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .video-upload {
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 32px;
+            border-radius: 20px;
+            margin: 16px;
         }
-        .upload-section, .video-grid {
-            width: 100%;
-            max-width: 600px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #243b55;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-        .upload-section input, .upload-section button {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
+        .video-upload input[type="file"],
+        .video-upload button {
+            padding: 14px 28px;
+            border-radius: 12px;
             border: none;
             font-size: 16px;
             font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
         }
-        .upload-section button {
-            background-color: #ff6a00;
+        .video-upload input[type="file"] {
+            background: #fff;
+            color: #333;
+            width: 250px;
+        }
+        .video-upload button {
+            background: linear-gradient(135deg, #243b55, #ffffff);
             color: #fff;
             cursor: pointer;
         }
-        .upload-section button:hover {
-            background-color: #ee0979;
+        .video-upload button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(255, 20, 100, 0.5);
         }
         .video-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 16px;
-            width: 100%;
+            padding: 16px;
         }
         .video-task {
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #243b55, #ffffff);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
             display: flex;
             flex-direction: column;
-            background: #1a2939;
-            padding: 10px;
-            border-radius: 10px;
+            align-items: center;
             text-align: center;
+            max-width: 320px;
         }
-        .video-title {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #ffffff;
+        .video-task:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
         }
-        video {
+        .video-container {
+            position: relative;
             width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            overflow: hidden;
             border-radius: 8px;
             background-color: #000;
+        }
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .video-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div class="upload-section">
-        <h2>Upload Video</h2>
+    <button class="nav-button" onclick="toggleUploadSection()">Upload Videos</button>
+    
+    <!-- Upload Section -->
+    <div class="video-upload" id="uploadSection" style="display: none;">
         <input type="file" id="videoFileInput" accept="video/*" multiple>
-        <button onclick="loadVideos()">Upload Videos</button>
-        <p id="uploadStatus" style="color: #ff6a00; font-size: 14px;"></p>
+        <button onclick="uploadVideos()">Upload</button>
+        <div id="uploadStatus"></div>
     </div>
 
+    <!-- Video Grid Section -->
     <div id="videoGrid" class="video-grid"></div>
 
     <script>
-        // IndexedDB setup
+        function toggleUploadSection() {
+            const uploadSection = document.getElementById("uploadSection");
+            uploadSection.style.display = uploadSection.style.display === "none" ? "block" : "none";
+        }
+
         let db;
+
         const request = indexedDB.open('VideoDB', 1);
 
         request.onupgradeneeded = function(event) {
             db = event.target.result;
-            db.createObjectStore('videoFiles', { keyPath: 'id' });
+            db.createObjectStore('videoFiles', { keyPath: 'id', autoIncrement: true });
         };
 
         request.onsuccess = function(event) {
             db = event.target.result;
-            loadStoredVideos(); // Load videos from DB on page load
+            loadStoredVideos();
         };
 
-        // Function to upload videos and save to IndexedDB
-        function loadVideos() {
+        function uploadVideos() {
             const videoInput = document.getElementById('videoFileInput');
             if (videoInput.files.length > 0) {
                 Array.from(videoInput.files).forEach(file => {
-                    createVideoTask(file); // Display video
-                    saveVideoToDB(file); // Save to DB
+                    createVideoTask(file);
+                    saveVideoToDB(file);
                 });
                 document.getElementById('uploadStatus').innerText = "Videos uploaded successfully!";
             } else {
@@ -110,13 +152,37 @@
             }
         }
 
-        // Save video file to IndexedDB
+        function createVideoTask(file) {
+            const videoGrid = document.getElementById('videoGrid');
+
+            const videoTask = document.createElement('div');
+            videoTask.className = 'video-task';
+
+            const videoContainer = document.createElement('div');
+            videoContainer.className = 'video-container';
+
+            const videoPlayer = document.createElement('video');
+            videoPlayer.controls = true;
+            videoPlayer.src = URL.createObjectURL(file);
+
+            videoContainer.appendChild(videoPlayer);
+
+            const videoTitle = document.createElement('p');
+            videoTitle.className = 'video-title';
+            videoTitle.textContent = file.name;
+
+            videoTask.appendChild(videoContainer);
+            videoTask.appendChild(videoTitle);
+
+            videoGrid.insertBefore(videoTask, videoGrid.firstChild);
+        }
+
         function saveVideoToDB(file) {
             const transaction = db.transaction(['videoFiles'], 'readwrite');
             const store = transaction.objectStore('videoFiles');
 
             const videoData = {
-                id: file.name,
+                id: Date.now(), // unique ID for each video
                 file: file
             };
 
@@ -131,28 +197,6 @@
             };
         }
 
-        // Display video on the page
-        function createVideoTask(file) {
-            const videoGrid = document.getElementById('videoGrid');
-
-            const videoTask = document.createElement('div');
-            videoTask.className = 'video-task';
-
-            const videoPlayer = document.createElement('video');
-            videoPlayer.controls = true;
-            videoPlayer.src = URL.createObjectURL(file);
-
-            const videoTitle = document.createElement('p');
-            videoTitle.className = 'video-title';
-            videoTitle.textContent = file.name;
-
-            videoTask.appendChild(videoPlayer);
-            videoTask.appendChild(videoTitle);
-
-            videoGrid.insertBefore(videoTask, videoGrid.firstChild);
-        }
-
-        // Load stored videos from IndexedDB on page load
         function loadStoredVideos() {
             const transaction = db.transaction(['videoFiles'], 'readonly');
             const store = transaction.objectStore('videoFiles');
@@ -161,8 +205,8 @@
             request.onsuccess = function(event) {
                 const videoFiles = event.target.result.reverse();
                 videoFiles.forEach(videoData => {
-                    const file = new File([videoData.file], videoData.id);
-                    createVideoTask(file); // Display video
+                    const file = new File([videoData.file], videoData.file.name);
+                    createVideoTask(file);
                 });
             };
         }

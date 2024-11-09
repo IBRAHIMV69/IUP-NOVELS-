@@ -6,121 +6,108 @@
     <title>Cloud Video Upload - Amazing Style</title>
     <style>
         /* Base Styling */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0;
-    padding: 20px;
-}
-
-/* Amazing Style for Buttons */
-button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px 0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-/* Nav Button Styling */
-.nav-button {
-    background-color: #6c757d;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.nav-button:hover {
-    background-color: #5a6268;
-}
-
-/* Nav Content */
-#navContent {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
-}
-
-/* Video Grid Layout */
-.video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    width: 100%;
-    max-width: 1200px;
-    margin-top: 20px;
-}
-
-/* Video Task */
-.video-task {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-align: center;
-}
-
-/* Video Player Styling */
-.video-container {
-    background-color: #000;
-    padding-top: 56.25%; /* 16:9 Aspect Ratio */
-    position: relative;
-}
-
-.video-container video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-}
-
-/* Video Title */
-.video-title {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #007bff;
-    padding: 10px 0;
-    background-color: #f8f9fa;
-}
-
-/* Upload Status Message */
-#uploadStatus {
-    font-weight: bold;
-    color: #28a745;
-    margin-top: 10px;
-}
-
-/* Progress Bar */
-#progressBarContainer {
-    width: 100%;
-    background-color: #f3f3f3;
-    border-radius: 8px;
-    margin-top: 10px;
-    height: 20px;
-}
-
-#progressBar {
-    height: 100%;
-    width: 0;
-    background-color: #007bff;
-    border-radius: 8px;
-}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        /* Amazing Style for Buttons */
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* Nav Button Styling */
+        .nav-button {
+            background-color: #6c757d;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .nav-button:hover {
+            background-color: #5a6268;
+        }
+        /* Nav Content */
+        #navContent {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        /* Video Grid Layout */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        /* Video Task */
+        .video-task {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+        /* Video Player Styling */
+        .video-container {
+            background-color: #000;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            position: relative;
+        }
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+        /* Video Title */
+        .video-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #007bff;
+            padding: 10px 0;
+            background-color: #f8f9fa;
+        }
+        /* Upload Status Message */
+        #uploadStatus {
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 10px;
+        }
+        /* Progress Bar */
+        #progressBarContainer {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 8px;
+            margin-top: 10px;
+            height: 20px;
+        }
+        #progressBar {
+            height: 100%;
+            width: 0;
+            background-color: #007bff;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -140,22 +127,23 @@ button:hover {
     <!-- Video Grid outside the nav section -->
     <div id="videoGrid" class="video-grid"></div>
 
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
 
     <script>
-        // Firebase configuration
+        // Initialize Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAuOZGwuvp8ZfgCTz5RiT_4xWN2XoLnNkw",
             authDomain: "arewa-tube.firebaseapp.com",
             projectId: "arewa-tube",
             storageBucket: "arewa-tube.firebasestorage.app",
             messagingSenderId: "704938562696",
-            appId: "1:704938562696:web:7d0afc6997c399c4327b3d"
+            appId: "1:704938562696:web:7d0afc6997c399c4327b3d",
+            measurementId: "G-RGHYD2VYKR"
         };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        const app = firebase.initializeApp(firebaseConfig);
         const storage = firebase.storage();
 
         function toggleNav() {
@@ -191,23 +179,19 @@ button:hover {
 
             uploadTask.on('state_changed', 
                 (snapshot) => {
-                    // Progress indicator
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    const progressBar = document.getElementById('progressBar');
                     progressBar.style.width = progress + '%';
                 }, 
                 (error) => {
                     console.error("Upload failed:", error);
-                    document.getElementById('uploadStatus').innerText = "Upload failed. Try again.";
-                    document.getElementById('progressBarContainer').style.display = 'none';
+                    uploadStatus.innerText = "Upload failed. Try again.";
+                    progressBarContainer.style.display = 'none';
                 }, 
                 () => {
-                    // Handle successful uploads
                     uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        console.log('File available at', downloadURL);
                         createVideoTask(downloadURL, file.name);
-                        document.getElementById('uploadStatus').innerText = "Video uploaded successfully!";
-                        document.getElementById('progressBarContainer').style.display = 'none';
+                        uploadStatus.innerText = "Video uploaded successfully!";
+                        progressBarContainer.style.display = 'none';
                     });
                 }
             );
@@ -235,7 +219,6 @@ button:hover {
             videoTask.appendChild(videoContainer);
             videoTask.appendChild(videoTitle);
 
-            // Insert the new video task directly into the video grid
             videoGrid.appendChild(videoTask);
         }
     </script>

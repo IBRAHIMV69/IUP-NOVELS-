@@ -105,6 +105,22 @@ button:hover {
     color: #28a745;
     margin-top: 10px;
 }
+
+/* Progress Bar */
+#progressBarContainer {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+    margin-top: 10px;
+    height: 20px;
+}
+
+#progressBar {
+    height: 100%;
+    width: 0;
+    background-color: #007bff;
+    border-radius: 8px;
+}
     </style>
 </head>
 <body>
@@ -115,6 +131,9 @@ button:hover {
             <input type="file" id="videoFileInput" accept="video/*" multiple>
             <button onclick="uploadVideos()">Upload Videos</button>
             <div id="uploadStatus"></div>
+            <div id="progressBarContainer" style="display: none;">
+                <div id="progressBar"></div>
+            </div>
         </div>
     </nav>
 
@@ -146,30 +165,41 @@ button:hover {
 
         function uploadVideos() {
             const videoInput = document.getElementById('videoFileInput');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const progressBarContainer = document.getElementById('progressBarContainer');
+            const progressBar = document.getElementById('progressBar');
+
             if (videoInput.files.length > 0) {
+                uploadStatus.innerText = "Videos uploading...";
+                progressBarContainer.style.display = 'block';
                 Array.from(videoInput.files).forEach(file => {
+                    if (file.size > 50000000) { // 50MB file size limit
+                        uploadStatus.innerText = "File is too large. Please upload files under 50MB.";
+                        progressBarContainer.style.display = 'none';
+                        return;
+                    }
                     uploadVideoToCloud(file);
                 });
-                document.getElementById('uploadStatus').innerText = "Videos uploading...";
             } else {
-                document.getElementById('uploadStatus').innerText = "Please select video files to upload.";
+                uploadStatus.innerText = "Please select video files to upload.";
             }
         }
 
         function uploadVideoToCloud(file) {
             const storageRef = storage.ref('videos/' + file.name);
-
             const uploadTask = storageRef.put(file);
 
             uploadTask.on('state_changed', 
                 (snapshot) => {
-                    // Progress indicator (optional)
+                    // Progress indicator
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload is ' + progress + '% done');
+                    const progressBar = document.getElementById('progressBar');
+                    progressBar.style.width = progress + '%';
                 }, 
                 (error) => {
                     console.error("Upload failed:", error);
                     document.getElementById('uploadStatus').innerText = "Upload failed. Try again.";
+                    document.getElementById('progressBarContainer').style.display = 'none';
                 }, 
                 () => {
                     // Handle successful uploads
@@ -177,6 +207,7 @@ button:hover {
                         console.log('File available at', downloadURL);
                         createVideoTask(downloadURL, file.name);
                         document.getElementById('uploadStatus').innerText = "Video uploaded successfully!";
+                        document.getElementById('progressBarContainer').style.display = 'none';
                     });
                 }
             );
@@ -204,7 +235,8 @@ button:hover {
             videoTask.appendChild(videoContainer);
             videoTask.appendChild(videoTitle);
 
-            videoGrid.insertBefore(videoTask, videoGrid.firstChild);
+            // Insert the new video task directly into the video grid
+            videoGrid.appendChild(videoTask);
         }
     </script>
 </body>

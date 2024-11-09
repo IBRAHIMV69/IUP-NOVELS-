@@ -3,125 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Persistent Video Upload - Amazing Style</title>
+    <title>Cloud Video Upload - Amazing Style</title>
     <style>
-        /* Styles for Amazing Style Design */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #141e30, #243b55);
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .nav-button {
-            background: linear-gradient(135deg, #ff6a00, #ee0979);
-            color: #fff;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            margin: 16px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .nav-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(238, 9, 121, 0.5);
-        }
-        #navContent {
-            display: none;
-            background: linear-gradient(135deg, #243b55, #141e30);
-            padding: 24px;
-            border-radius: 16px;
-            margin: 16px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        .video-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 32px;
-            border-radius: 20px;
-        }
-        .video-upload input[type="file"],
-        .video-upload button {
-            padding: 14px 28px;
-            border-radius: 12px;
-            border: none;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            transition: all 0.3s ease;
-        }
-        .video-upload input[type="file"] {
-            background: #fff;
-            color: #333;
-            width: 250px;
-        }
-        .video-upload button {
-            background: linear-gradient(135deg, #243b55, #ffffff);
-            color: #fff;
-            cursor: pointer;
-        }
-        .video-upload button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(255, 20, 100, 0.5);
-        }
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 16px;
-            padding: 16px;
-        }
-        .video-task {
-            border-radius: 12px;
-            overflow: hidden;
-            background: linear-gradient(135deg, #243b55, #ffffff);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            max-width: 320px;
-        }
-        .video-task:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
-        }
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            overflow: hidden;
-            border-radius: 8px;
-            background-color: #000;
-        }
-        video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .video-title {
-            font-size: 15px;
-            font-weight: bold;
-            margin-top: 10px;
-            color: #333;
-        }
+        /* Base Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Amazing Style for Buttons */
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Nav Button Styling */
+.nav-button {
+    background-color: #6c757d;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.nav-button:hover {
+    background-color: #5a6268;
+}
+
+/* Nav Content */
+#navContent {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+/* Video Grid Layout */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 20px;
+}
+
+/* Video Task */
+.video-task {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+}
+
+/* Video Player Styling */
+.video-container {
+    background-color: #000;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    position: relative;
+}
+
+.video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+/* Video Title */
+.video-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #007bff;
+    padding: 10px 0;
+    background-color: #f8f9fa;
+}
+
+/* Upload Status Message */
+#uploadStatus {
+    font-weight: bold;
+    color: #28a745;
+    margin-top: 10px;
+}
     </style>
 </head>
 <body>
     <button class="nav-button" onclick="toggleNav()">Upload Section</button>
     
-    <nav id="navContent">
+    <nav id="navContent" style="display: none;">
         <div class="video-upload">
             <input type="file" id="videoFileInput" accept="video/*" multiple>
             <button onclick="uploadVideos()">Upload Videos</button>
@@ -132,41 +121,68 @@
     <!-- Video Grid outside the nav section -->
     <div id="videoGrid" class="video-grid"></div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAuOZGwuvp8ZfgCTz5RiT_4xWN2XoLnNkw",
+            authDomain: "arewa-tube.firebaseapp.com",
+            projectId: "arewa-tube",
+            storageBucket: "arewa-tube.firebasestorage.app",
+            messagingSenderId: "704938562696",
+            appId: "1:704938562696:web:7d0afc6997c399c4327b3d"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+
         function toggleNav() {
             const navContent = document.getElementById("navContent");
             navContent.style.display = navContent.style.display === "none" ? "block" : "none";
         }
 
-        let db;
-
-        // Open the IndexedDB database
-        const request = indexedDB.open('VideoDB', 1);
-
-        request.onupgradeneeded = function(event) {
-            db = event.target.result;
-            db.createObjectStore('videoFiles', { keyPath: 'id', autoIncrement: true });
-        };
-
-        request.onsuccess = function(event) {
-            db = event.target.result;
-            loadStoredVideos();
-        };
-
         function uploadVideos() {
             const videoInput = document.getElementById('videoFileInput');
             if (videoInput.files.length > 0) {
                 Array.from(videoInput.files).forEach(file => {
-                    saveVideoToDB(file);
-                    createVideoTask(file);
+                    uploadVideoToCloud(file);
                 });
-                document.getElementById('uploadStatus').innerText = "Videos uploaded successfully!";
+                document.getElementById('uploadStatus').innerText = "Videos uploading...";
             } else {
                 document.getElementById('uploadStatus').innerText = "Please select video files to upload.";
             }
         }
 
-        function createVideoTask(file) {
+        function uploadVideoToCloud(file) {
+            const storageRef = storage.ref('videos/' + file.name);
+
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // Progress indicator (optional)
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                }, 
+                (error) => {
+                    console.error("Upload failed:", error);
+                    document.getElementById('uploadStatus').innerText = "Upload failed. Try again.";
+                }, 
+                () => {
+                    // Handle successful uploads
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        createVideoTask(downloadURL, file.name);
+                        document.getElementById('uploadStatus').innerText = "Video uploaded successfully!";
+                    });
+                }
+            );
+        }
+
+        function createVideoTask(downloadURL, name) {
             const videoGrid = document.getElementById('videoGrid');
 
             const videoTask = document.createElement('div');
@@ -177,69 +193,18 @@
 
             const videoPlayer = document.createElement('video');
             videoPlayer.controls = true;
-            videoPlayer.src = URL.createObjectURL(file);
+            videoPlayer.src = downloadURL;
 
             videoContainer.appendChild(videoPlayer);
 
             const videoTitle = document.createElement('p');
             videoTitle.className = 'video-title';
-            videoTitle.textContent = file.name;
+            videoTitle.textContent = name;
 
             videoTask.appendChild(videoContainer);
             videoTask.appendChild(videoTitle);
 
             videoGrid.insertBefore(videoTask, videoGrid.firstChild);
-        }
-
-        function saveVideoToDB(file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const transaction = db.transaction(['videoFiles'], 'readwrite');
-                const store = transaction.objectStore('videoFiles');
-
-                const videoData = {
-                    name: file.name,
-                    data: event.target.result
-                };
-
-                store.add(videoData);
-
-                transaction.oncomplete = function() {
-                    console.log("Video file saved to IndexedDB");
-                };
-
-                transaction.onerror = function() {
-                    console.error("Error saving video file to IndexedDB");
-                };
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function loadStoredVideos() {
-            const transaction = db.transaction(['videoFiles'], 'readonly');
-            const store = transaction.objectStore('videoFiles');
-            const request = store.getAll();
-
-            request.onsuccess = function(event) {
-                const videoFiles = event.target.result;
-                videoFiles.forEach(videoData => {
-                    const videoBlob = dataURLtoBlob(videoData.data);
-                    const file = new File([videoBlob], videoData.name, { type: 'video/mp4' });
-                    createVideoTask(file);
-                });
-            };
-        }
-
-        function dataURLtoBlob(dataurl) {
-            const arr = dataurl.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-            }
-            return new Blob([u8arr], { type: mime });
         }
     </script>
 </body>

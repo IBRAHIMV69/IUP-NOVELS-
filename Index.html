@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Tasks - Amazing Style</title>
+    <title>Persistent Video Upload - Amazing Style</title>
     <style>
         /* Styles for Amazing Style Design */
         body {
@@ -48,7 +48,7 @@
             padding: 32px;
             border-radius: 20px;
         }
-        .video-upload input[type="text"],
+        .video-upload input[type="file"],
         .video-upload button {
             padding: 14px 28px;
             border-radius: 12px;
@@ -58,7 +58,7 @@
             color: #333;
             transition: all 0.3s ease;
         }
-        .video-upload input[type="text"] {
+        .video-upload input[type="file"] {
             background: #fff;
             color: #333;
             width: 250px;
@@ -103,13 +103,12 @@
             border-radius: 8px;
             background-color: #000;
         }
-        iframe {
+        video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border: 0;
         }
         .video-title {
             font-size: 15px;
@@ -124,10 +123,8 @@
     
     <nav id="navContent">
         <div class="video-upload">
-            <input type="text" id="codeInput" placeholder="Enter permission code">
-            <input type="text" id="videoIdInput" placeholder="Enter YouTube Video ID" disabled>
-            <button onclick="checkCode()">Submit</button>
-            <button onclick="loadYouTubeVideo()" disabled id="loadButton">Add Video</button>
+            <input type="file" id="videoFileInput" accept="video/*" multiple>
+            <button onclick="uploadVideos()">Upload Videos</button>
             <div id="uploadStatus"></div>
         </div>
     </nav>
@@ -143,11 +140,12 @@
 
         let db;
 
+        // Open the IndexedDB database
         const request = indexedDB.open('VideoDB', 1);
 
         request.onupgradeneeded = function(event) {
             db = event.target.result;
-            db.createObjectStore('videoFiles', { keyPath: 'id' });
+            db.createObjectStore('videoFiles', { keyPath: 'id', autoIncrement: true });
         };
 
         request.onsuccess = function(event) {
@@ -155,42 +153,20 @@
             loadStoredVideos();
         };
 
-        function checkCode() {
-            const code = document.getElementById('codeInput').value;
-            const videoIdInput = document.getElementById('videoIdInput');
-            const loadButton = document.getElementById('loadButton');
-
-            const storedCode = localStorage.getItem('videoUploadCode');
-
-            if (storedCode === code) {
-                videoIdInput.disabled = false;
-                loadButton.disabled = false;
-                document.getElementById('uploadStatus').innerText = "Code accepted! You can now add YouTube video IDs.";
-            } else if (code === '112233') {
-                localStorage.setItem('videoUploadCode', code);
-                videoIdInput.disabled = false;
-                loadButton.disabled = false;
-                document.getElementById('uploadStatus').innerText = "Code accepted! You can now add YouTube video IDs.";
+        function uploadVideos() {
+            const videoInput = document.getElementById('videoFileInput');
+            if (videoInput.files.length > 0) {
+                Array.from(videoInput.files).forEach(file => {
+                    saveVideoToDB(file);
+                    createVideoTask(file);
+                });
+                document.getElementById('uploadStatus').innerText = "Videos uploaded successfully!";
             } else {
-                document.getElementById('uploadStatus').innerText = "Invalid code. Please enter the correct code.";
-                videoIdInput.disabled = true;
-                loadButton.disabled = true;
+                document.getElementById('uploadStatus').innerText = "Please select video files to upload.";
             }
         }
 
-        function loadYouTubeVideo() {
-            const videoId = document.getElementById('videoIdInput').value.trim();
-            
-            if (videoId) {
-                saveVideoIdToDB(videoId); // Save YouTube ID to IndexedDB
-                createVideoTask(videoId); // Display the video based on YouTube ID
-                document.getElementById('videoIdInput').value = ''; // Clear input
-            } else {
-                document.getElementById('uploadStatus').innerText = "Please enter a YouTube video ID.";
-            }
-        }
-
-        function createVideoTask(videoId) {
+        function createVideoTask(file) {
             const videoGrid = document.getElementById('videoGrid');
 
             const videoTask = document.createElement('div');
@@ -199,16 +175,15 @@
             const videoContainer = document.createElement('div');
             videoContainer.className = 'video-container';
 
-            // Embed YouTube video based on the ID
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://www.youtube.com/embed/${videoId}`;
-            iframe.allowFullscreen = true;
+            const videoPlayer = document.createElement('video');
+            videoPlayer.controls = true;
+            videoPlayer.src = URL.createObjectURL(file);
 
-            videoContainer.appendChild(iframe);
+            videoContainer.appendChild(videoPlayer);
 
             const videoTitle = document.createElement('p');
             videoTitle.className = 'video-title';
-            videoTitle.textContent = `YouTube Video ID: ${videoId}`;
+            videoTitle.textContent = file.name;
 
             videoTask.appendChild(videoContainer);
             videoTask.appendChild(videoTitle);
@@ -216,23 +191,28 @@
             videoGrid.insertBefore(videoTask, videoGrid.firstChild);
         }
 
-        function saveVideoIdToDB(videoId) {
-            const transaction = db.transaction(['videoFiles'], 'readwrite');
-            const store = transaction.objectStore('videoFiles');
+        function saveVideoToDB(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const transaction = db.transaction(['videoFiles'], 'readwrite');
+                const store = transaction.objectStore('videoFiles');
 
-            const videoData = {
-                id: videoId,
+                const videoData = {
+                    name: file.name,
+                    data: event.target.result
+                };
+
+                store.add(videoData);
+
+                transaction.oncomplete = function() {
+                    console.log("Video file saved to IndexedDB");
+                };
+
+                transaction.onerror = function() {
+                    console.error("Error saving video file to IndexedDB");
+                };
             };
-
-            const request = store.put(videoData);
-
-            request.onsuccess = function() {
-                console.log("YouTube Video ID saved to IndexedDB");
-            };
-
-            request.onerror = function() {
-                console.error("Error saving YouTube Video ID to IndexedDB");
-            };
+            reader.readAsDataURL(file);
         }
 
         function loadStoredVideos() {
@@ -241,11 +221,25 @@
             const request = store.getAll();
 
             request.onsuccess = function(event) {
-                const videoIds = event.target.result.reverse();
-                videoIds.forEach(videoData => {
-                    createVideoTask(videoData.id);
+                const videoFiles = event.target.result;
+                videoFiles.forEach(videoData => {
+                    const videoBlob = dataURLtoBlob(videoData.data);
+                    const file = new File([videoBlob], videoData.name, { type: 'video/mp4' });
+                    createVideoTask(file);
                 });
             };
+        }
+
+        function dataURLtoBlob(dataurl) {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
         }
     </script>
 </body>

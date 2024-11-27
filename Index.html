@@ -3,224 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Video Upload - Amazing Style</title>
+    <title>YouTube Video Search & URL Buttons</title>
     <style>
-        /* Base Styling */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-        }
-        /* Amazing Style for Buttons */
-        button {
-            background-color: #007bff;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #000, #b21f1f, #000);
             color: #fff;
-            border: none;
-            padding: 10px 20px;
-            margin: 10px 0;
+            margin: 0;
+            padding: 0;
+        }
+        .balance, .search-bar, .url-buttons, .promo-code {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            margin: 16px;
         }
-        button:hover {
-            background-color: #0056b3;
-        }
-        /* Nav Button Styling */
-        .nav-button {
-            background-color: #6c757d;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .nav-button:hover {
-            background-color: #5a6268;
-        }
-        /* Nav Content */
-        #navContent {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
-        /* Video Grid Layout */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 20px;
-        }
-        /* Video Task */
         .video-task {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
             overflow: hidden;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 180px;
+        }
+        .search-bar input, .promo-code input {
+            width: 70%;
+            padding: 8px;
+            border-radius: 4px;
+            border: none;
+        }
+        .search-bar button, .url-buttons a, .promo-code button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            background: linear-gradient(to right, #000, #b21f1f, #000);
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
             text-align: center;
+            margin-left: 8px;
         }
-        /* Video Player Styling */
-        .video-container {
-            background-color: #000;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            position: relative;
+        .search-bar button:hover, .url-buttons a:hover, .promo-code button:hover {
+            background: linear-gradient(to right, #000, #d32f2f, #000);
         }
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 8px;
-        }
-        /* Video Title */
-        .video-title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #007bff;
-            padding: 10px 0;
-            background-color: #f8f9fa;
-        }
-        /* Upload Status Message */
-        #uploadStatus {
-            font-weight: bold;
-            color: #28a745;
-            margin-top: 10px;
-        }
-        /* Progress Bar */
-        #progressBarContainer {
-            width: 100%;
-            background-color: #f3f3f3;
-            border-radius: 8px;
-            margin-top: 10px;
-            height: 20px;
-        }
-        #progressBar {
-            height: 100%;
-            width: 0;
-            background-color: #007bff;
-            border-radius: 8px;
+        .description {
+            margin: 16px;
+            font-size: 14px;
+            text-align: center;
+            color: #ddd;
         }
     </style>
 </head>
 <body>
-    <button class="nav-button" onclick="toggleNav()">Upload Section</button>
+    <div class="balance">
+        <p>Balance: $<span id="balance">1.00</span></p>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Enter video title...">
+        <button onclick="searchVideo()">Search</button>
+    </div>
     
-    <nav id="navContent" style="display: none;">
-        <div class="video-upload">
-            <input type="file" id="videoFileInput" accept="video/*" multiple>
-            <button onclick="uploadVideos()">Upload Videos</button>
-            <div id="uploadStatus"></div>
-            <div id="progressBarContainer" style="display: none;">
-                <div id="progressBar"></div>
-            </div>
-        </div>
-    </nav>
+    <div class="video-container">
+        <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    
+    <!-- Short Description -->
+    <p class="description">Get $2 for every visiting sites of advertisers.</p>
 
-    <!-- Video Grid outside the nav section -->
-    <div id="videoGrid" class="video-grid"></div>
+    <!-- URL Buttons Section -->
+    <div class="url-buttons">
+        <a href="https://example.com/page1" target="_blank" id="url1" onclick="markUrlVisited(0)">Earn $2</a>
+        <a href="https://example.com/page2" target="_blank" id="url2" onclick="markUrlVisited(1)">Earn $2</a>
+        <a href="https://example.com/page3" target="_blank" id="url3" onclick="markUrlVisited(2)">Earn $2</a>
+        <a href="https://example.com/page4" target="_blank" id="url4" onclick="markUrlVisited(3)">Earn $2</a>
+    </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    <!-- Promo Code Section -->
+    <div class="promo-code">
+    <input type="text" id="promoCodeInput" placeholder="Enter promo code">
+    <button onclick="applyPromoCode()">Submit</button>
+</div>
 
     <script>
-        // Initialize Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAuOZGwuvp8ZfgCTz5RiT_4xWN2XoLnNkw",
-            authDomain: "arewa-tube.firebaseapp.com",
-            projectId: "arewa-tube",
-            storageBucket: "arewa-tube.firebasestorage.app",
-            messagingSenderId: "704938562696",
-            appId: "1:704938562696:web:7d0afc6997c399c4327b3d",
-            measurementId: "G-RGHYD2VYKR"
-        };
+        // List of videos with titles and corresponding YouTube IDs
+        const videoList = [
+            { title: "112233", id: "qzQvUKavtL0" },
+            { title: "Incredible Science", id: "AQO98HXS9o0" },
+            { title: "Gurnani", id: "i9ddLGUqrlU" }
+        ];
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const storage = firebase.storage();
+        let balance = parseFloat(localStorage.getItem('balance')) || 1.00;
+        let urlsVisited = JSON.parse(localStorage.getItem('urlsVisited')) || [null, null, null, null]; // Track URL visits and their timestamps
 
-        function toggleNav() {
-            const navContent = document.getElementById("navContent");
-            navContent.style.display = navContent.style.display === "none" ? "block" : "none";
-        }
+        // Update the balance display
+        document.getElementById('balance').textContent = balance.toFixed(2);
 
-        function uploadVideos() {
-            const videoInput = document.getElementById('videoFileInput');
-            const uploadStatus = document.getElementById('uploadStatus');
-            const progressBarContainer = document.getElementById('progressBarContainer');
-            const progressBar = document.getElementById('progressBar');
-
-            if (videoInput.files.length > 0) {
-                uploadStatus.innerText = "Videos uploading...";
-                progressBarContainer.style.display = 'block';
-                Array.from(videoInput.files).forEach(file => {
-                    if (file.size > 50000000) { // 50MB file size limit
-                        uploadStatus.innerText = "File is too large. Please upload files under 50MB.";
-                        progressBarContainer.style.display = 'none';
-                        return;
-                    }
-                    uploadVideoToCloud(file);
-                });
-            } else {
-                uploadStatus.innerText = "Please select video files to upload.";
+        // Function to unlock the next button after a visit
+        function unlockNextButton(index) {
+            if (index < 3 && !urlsVisited[index + 1]) {
+                document.getElementById(`url${index + 2}`).style.pointerEvents = 'auto'; // Unlock the next button
+                document.getElementById(`url${index + 2}`).style.opacity = '1'; // Make the next button visible
             }
         }
 
-        function uploadVideoToCloud(file) {
-            const storageRef = storage.ref('videos/' + file.name);
-            const uploadTask = storageRef.put(file);
+        // Function to lock the buttons and mark visits
+        function lockButtons() {
+            for (let i = 0; i < urlsVisited.length; i++) {
+                const timestamp = urlsVisited[i];
+                const currentTime = new Date().getTime();
+                
+                if (timestamp) {
+                    const timeDifference = currentTime - timestamp;
+                    const oneHourInMillis = 60 * 60 * 1000;
 
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressBar.style.width = progress + '%';
-                }, 
-                (error) => {
-                    console.error("Upload failed:", error);
-                    uploadStatus.innerText = "Upload failed. Try again.";
-                    progressBarContainer.style.display = 'none';
-                }, 
-                () => {
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        createVideoTask(downloadURL, file.name);
-                        uploadStatus.innerText = "Video uploaded successfully!";
-                        progressBarContainer.style.display = 'none';
-                    });
+                    // Check if 1 hour has passed since the URL was visited
+                    if (timeDifference < oneHourInMillis) {
+                        document.getElementById(`url${i + 1}`).style.pointerEvents = 'none'; // Lock the button
+                        document.getElementById(`url${i + 1}`).style.opacity = '0.5'; // Make the button look locked
+                    } else {
+                        document.getElementById(`url${i + 1}`).style.pointerEvents = 'auto'; // Unlock the button
+                        document.getElementById(`url${i + 1}`).style.opacity = '1'; // Make the button visible
+                    }
+                } else {
+                    document.getElementById(`url${i + 1}`).style.pointerEvents = 'auto'; // Unlock the button if not visited
+                    document.getElementById(`url${i + 1}`).style.opacity = '1'; // Make the button visible
                 }
-            );
+            }
         }
 
-        function createVideoTask(downloadURL, name) {
-            const videoGrid = document.getElementById('videoGrid');
-
-            const videoTask = document.createElement('div');
-            videoTask.className = 'video-task';
-
-            const videoContainer = document.createElement('div');
-            videoContainer.className = 'video-container';
-
-            const videoPlayer = document.createElement('video');
-            videoPlayer.controls = true;
-            videoPlayer.src = downloadURL;
-
-            videoContainer.appendChild(videoPlayer);
-
-            const videoTitle = document.createElement('p');
-            videoTitle.className = 'video-title';
-            videoTitle.textContent = name;
-
-            videoTask.appendChild(videoContainer);
-            videoTask.appendChild(videoTitle);
-
-            videoGrid.appendChild(videoTask);
+        function loadVideo(videoId) {
+            if (balance >= 1) {
+                balance -= 1;
+                localStorage.setItem('balance', balance.toFixed(2));
+                document.getElementById('balance').textContent = balance.toFixed(2);
+                const iframe = document.getElementById('videoIframe');
+                iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1`;
+            } else {
+                alert("Insufficient balance. Visit the URL buttons to earn more balance.");
+            }
         }
+
+        function searchVideo() {
+            const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            const video = videoList.find(v => v.title.toLowerCase() === searchQuery);
+
+            if (video) {
+                loadVideo(video.id);
+            } else {
+                alert("Video not found. Please try another title.");
+            }
+        }
+
+        function markUrlVisited(index) {
+            if (!urlsVisited[index]) {
+                urlsVisited[index] = new Date().getTime(); // Store the timestamp of the visit
+                localStorage.setItem('urlsVisited', JSON.stringify(urlsVisited)); // Save to localStorage
+                addBalance(2.00); // Add $2 to the balance for visiting a URL
+                unlockNextButton(index); // Unlock the next button after the current one is visited
+                lockButtons(); // Lock visited buttons
+            } else {
+                alert("You have already visited this URL.");
+            }
+        }
+
+        function addBalance(amount) {
+            balance += amount;
+            localStorage.setItem('balance', balance.toFixed(2));
+            document.getElementById('balance').textContent = balance.toFixed(2);
+        }
+
+        // Promo codes and their values
+const promoCodes = {
+    '112277': 50.00,
+    '334455': 20.00,
+    '556677': 10.00,
+    '778899': 30.00,
+};
+
+// Load used codes from localStorage
+let usedPromoCodes = JSON.parse(localStorage.getItem('usedPromoCodes')) || [];
+
+// Function to apply a promo code
+function applyPromoCode() {
+    const promoCode = document.getElementById('promoCodeInput').value.trim();
+
+    // Check if the promo code exists and hasn't been used
+    if (promoCodes[promoCode] && !usedPromoCodes.includes(promoCode)) {
+        const amount = promoCodes[promoCode];
+        addBalance(amount); // Update balance with the promo code value
+        usedPromoCodes.push(promoCode); // Mark code as used
+        localStorage.setItem('usedPromoCodes', JSON.stringify(usedPromoCodes)); // Save to localStorage
+        alert(`Promo code applied! $${amount.toFixed(2)} added to your balance.`);
+    } else if (usedPromoCodes.includes(promoCode)) {
+        alert("You have already used this promo code.");
+    } else {
+        alert("Invalid promo code. Please try again.");
+    }
+
+    // Clear the input field
+    document.getElementById('promoCodeInput').value = '';
+}
+
+// Function to add balance
+function addBalance(amount) {
+    balance += amount;
+    localStorage.setItem('balance', balance.toFixed(2));
+    document.getElementById('balance').textContent = balance.toFixed(2);
+}
+
+        // Initialize the buttons on page load
+        lockButtons();
     </script>
 </body>
 </html>
